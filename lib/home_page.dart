@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voice_assistant/color_manager.dart';
+import 'package:voice_assistant/ai_methods.dart';
 import 'package:voice_assistant/widgets/command_box.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,7 +14,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final SpeechToText speech = SpeechToText();
+  final GeminiMethods geminiMethods = GeminiMethods();
   String lastWords = '';
+  bool speechEnabled = false;
+  String? generateImageUrl;
+  String? generatedContent;
+  bool isOptions=true;
 
   @override
   void initState() {
@@ -79,53 +85,65 @@ class _HomeScreenState extends State<HomeScreen> {
               )),
               const SizedBox(height: 12),
               Container(
-                height: 100,
+                
                 width: MediaQuery.sizeOf(context).width - 50,
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(20)
                         .copyWith(topLeft: Radius.zero)),
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Center(
-                    child: Text("How can I help you , Pookie?",
+                    child: Text(
+                        generatedContent != null
+                            ? generatedContent!
+                            : "How can I help you , Pookie?",
                         style: TextStyle(
                             fontFamily: 'Cera Pro',
                             color: Colors.black87,
-                            fontSize: 25),
-                        textAlign: TextAlign.center),
+                            fontSize: generatedContent != null
+                            ? 18:25),
+                        textAlign:generatedContent != null
+                            ? TextAlign.start: TextAlign.center),
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Here are a few commands",
-                      style: TextStyle(
-                          fontFamily: 'Cera Pro',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18),
-                    )),
-              ),
-              CommandBox(
-                color: ColorManager.darkYellow,
-                heading: "ChatGpt",
-                text:
-                    "A smarter way to stay organised and informed with ChatGpt",
-              ),
-              CommandBox(
-                color: ColorManager.mediumYellow,
-                heading: "Dall-E",
-                text:
-                    "Get inspired and stay creative with your personal assistant powered by Dall-E",
-              ),
-              CommandBox(
-                color: ColorManager.darkYellow,
-                heading: "Smart voice Assistant",
-                text:
-                    "Get the best of both worlds with a voice assistant powered by Dall-E and ChatGPT",
+              Visibility(
+                visible: isOptions,
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Here are a few commands",
+                            style: TextStyle(
+                                fontFamily: 'Cera Pro',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          )),
+                    ),
+                    CommandBox(
+                      color: ColorManager.darkYellow,
+                      heading: "ChatGpt",
+                      text:
+                          "A smarter way to stay organised and informed with ChatGpt",
+                    ),
+                    CommandBox(
+                      color: ColorManager.mediumYellow,
+                      heading: "Dall-E",
+                      text:
+                          "Get inspired and stay creative with your personal assistant powered by Dall-E",
+                    ),
+                    CommandBox(
+                      color: ColorManager.darkYellow,
+                      heading: "Smart voice Assistant",
+                      text:
+                          "Get the best of both worlds with a voice assistant powered by Dall-E and ChatGPT",
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -138,12 +156,27 @@ class _HomeScreenState extends State<HomeScreen> {
               await startListening();
             } else if (speech.isListening) {
               print("stop");
+
               await stopListening();
+
+              await Future.delayed(Duration(milliseconds: 500));
+              final content = await geminiMethods.isImageNeeded(lastWords);
+              if (content.contains('https')) {
+                generateImageUrl = content;
+                generatedContent = null;
+                isOptions=false;
+                setState(() {});
+              } else {
+                print("text set");
+                generateImageUrl = null;
+                generatedContent = content;
+                isOptions=false;
+                setState(() {});
+              }
             } else {
               print("init");
               initSpeech();
             }
-            print(lastWords);
           },
           backgroundColor: ColorManager.lightYellow,
           child: const Icon(Icons.mic)),

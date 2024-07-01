@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:voice_assistant/color_manager.dart';
 import 'package:voice_assistant/home_page.dart';
+import 'package:voice_assistant/secrets.dart';
 
 void main() {
+  Gemini.init(apiKey: geminiApiKey);
+
+
   runApp(const MyApp());
 }
 
