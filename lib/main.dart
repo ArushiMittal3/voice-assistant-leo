@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:voice_assistant/color_manager.dart';
 import 'package:voice_assistant/home_page.dart';
 
 void main() {
@@ -12,13 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Voice Assistant',
+      title: 'Voice Assistant Leo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: ThemeData.light(useMaterial3: true).copyWith(scaffoldBackgroundColor: ColorManager.white),
       home: const HomeScreen(),
     );
   }
