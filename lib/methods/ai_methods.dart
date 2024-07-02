@@ -1,9 +1,11 @@
 // ignore_for_file: avoid_print
 
 import 'dart:typed_data';
-
 import 'package:brain_fusion/brain_fusion.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+
+
+//IMAGE GENERATION LEFT 
 
 class GeminiMethods {
   final gemini = Gemini.instance;
@@ -52,6 +54,7 @@ class GeminiMethods {
   }
 
   Future<Uint8List> brainFusionImage(String prompt) async {
+    //API 401 ---use a different api 
     Uint8List image =
         await imageAI.runAI(prompt, AIStyle.anime, Resolution.r1x1);
     return image;

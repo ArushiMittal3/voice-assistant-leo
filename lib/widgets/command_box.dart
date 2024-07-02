@@ -14,7 +14,7 @@ class CommandBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       child: Container(
           height: 95,
           width: MediaQuery.sizeOf(context).width - 50,
@@ -28,7 +28,7 @@ class CommandBox extends StatelessWidget {
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Text(heading,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16))),
                 Text(text)
               ],

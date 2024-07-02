@@ -2,8 +2,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:voice_assistant/color_manager.dart';
-import 'package:voice_assistant/ai_methods.dart';
+import 'package:voice_assistant/core/color_manager.dart';
+import 'package:voice_assistant/methods/ai_methods.dart';
 import 'package:voice_assistant/widgets/command_box.dart';
 import 'package:voice_assistant/widgets/loaders.dart';
 
@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                  
                  Visibility(
                   visible: isLoading,
-                  child: Loader()),
+                  child: const Loader()),
                   Column(
                     children: [
                       ZoomIn(
@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderRadius: BorderRadius.circular(20)
                                   .copyWith(topLeft: Radius.zero)),
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: Center(
                               child: Text(
                                   generatedContent != null
@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       
                       SlideInLeft(
-                        duration: Duration(milliseconds: 1500),
+                        duration: const Duration(milliseconds: 1500),
                         child: Visibility(
                           visible: isOptions,
                           child: Column(
@@ -140,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     )),
                               ),
                               SlideInLeft(
-                                duration: Duration(milliseconds: 2000),
+                                duration: const Duration(milliseconds: 2000),
                                 child: CommandBox(
                                   color: ColorManager.darkYellow,
                                   heading: "ChatGpt",
@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               SlideInLeft(
-                                duration: Duration(milliseconds: 2500),
+                                duration: const Duration(milliseconds: 2500),
                                 child: CommandBox(
                                   color: ColorManager.mediumYellow,
                                   heading: "Dall-E",
@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               SlideInLeft(
-                                duration: Duration(milliseconds: 3000),
+                                duration: const Duration(milliseconds: 3000),
                                 child: CommandBox(
                                   color: ColorManager.darkYellow,
                                   heading: "Smart voice Assistant",
@@ -182,26 +182,25 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
           onPressed: () async {
             if (await speech.hasPermission && speech.isNotListening) {
-              print("start");
               await startListening();
             } else if (speech.isListening) {
-              print("stop");
-
               await stopListening();
+              await Future.delayed(const Duration(milliseconds: 500));
 
-              await Future.delayed(Duration(milliseconds: 500));
               setState(() {
                 isLoading = true;
                 isOptions = false;
               });
+
               final content = await geminiMethods.isImageNeeded(lastWords);
+
               if (content.contains('https')) {
                 generateImageUrl = content;
                 generatedContent = null;
                 
                 setState(() {});
               } else {
-                print("text set");
+
                 generateImageUrl = null;
                 generatedContent = content;
 
@@ -211,7 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 
               }
             } else {
-              print("init");
               initSpeech();
             }
           },
