@@ -39,7 +39,7 @@ dependencies:
   http: ^1.1.0
   flutter_gemini: ^2.0.3
   brain_fusion: ^0.1.1
-  text_to_speech: ^0.2.3
+  animate_do: ^3.3.4
 
 dev_dependencies:
   flutter_test:

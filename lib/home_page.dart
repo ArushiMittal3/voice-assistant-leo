@@ -1,9 +1,11 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voice_assistant/color_manager.dart';
 import 'package:voice_assistant/ai_methods.dart';
 import 'package:voice_assistant/widgets/command_box.dart';
+import 'package:voice_assistant/widgets/loaders.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,7 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool speechEnabled = false;
   String? generateImageUrl;
   String? generatedContent;
-  bool isOptions=true;
+  bool isOptions = true;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -65,12 +68,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         shadowColor: Colors.black,
         backgroundColor: ColorManager.lightYellow,
-        title: const Text("Leo"),
+        title: Bounce(child: const Text("Leo")),
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.menu),
-        ),
+        leading: const Icon(Icons.ac_unit),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
@@ -78,72 +78,102 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Center(
-                  child: Image.asset(
-                'assets/images/leo.jpg',
-                height: 150,
-              )),
-              const SizedBox(height: 12),
-              Container(
+               BounceInDown(
+                 child: Center(
+                        child: Image.asset(
+                      'assets/images/leo.jpg',
+                      height: 150,
+                    )),
+               ),
+                  const SizedBox(height: 12),
+              Stack(
                 
-                width: MediaQuery.sizeOf(context).width - 50,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(20)
-                        .copyWith(topLeft: Radius.zero)),
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text(
-                        generatedContent != null
-                            ? generatedContent!
-                            : "How can I help you , Pookie?",
-                        style: TextStyle(
-                            fontFamily: 'Cera Pro',
-                            color: Colors.black87,
-                            fontSize: generatedContent != null
-                            ? 18:25),
-                        textAlign:generatedContent != null
-                            ? TextAlign.start: TextAlign.center),
+                children: [
+                 
+                 Visibility(
+                  visible: isLoading,
+                  child: Loader()),
+                  Column(
+                    children: [
+                      ZoomIn(
+                        child: Container(
+                          width: MediaQuery.sizeOf(context).width - 50,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(20)
+                                  .copyWith(topLeft: Radius.zero)),
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text(
+                                  generatedContent != null
+                                      ? generatedContent!
+                                      : "How can I help you , Pookie?",
+                                  style: TextStyle(
+                                      fontFamily: 'Cera Pro',
+                                      color: Colors.black87,
+                                      fontSize: generatedContent != null ? 18 : 25),
+                                  textAlign: generatedContent != null
+                                      ? TextAlign.start
+                                      : TextAlign.center),
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      SlideInLeft(
+                        duration: Duration(milliseconds: 1500),
+                        child: Visibility(
+                          visible: isOptions,
+                          child: Column(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Here are a few commands",
+                                      style: TextStyle(
+                                          fontFamily: 'Cera Pro',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    )),
+                              ),
+                              SlideInLeft(
+                                duration: Duration(milliseconds: 2000),
+                                child: CommandBox(
+                                  color: ColorManager.darkYellow,
+                                  heading: "ChatGpt",
+                                  text:
+                                      "A smarter way to stay organised and informed with ChatGpt",
+                                ),
+                              ),
+                              SlideInLeft(
+                                duration: Duration(milliseconds: 2500),
+                                child: CommandBox(
+                                  color: ColorManager.mediumYellow,
+                                  heading: "Dall-E",
+                                  text:
+                                      "Get inspired and stay creative with your personal assistant powered by Dall-E",
+                                ),
+                              ),
+                              SlideInLeft(
+                                duration: Duration(milliseconds: 3000),
+                                child: CommandBox(
+                                  color: ColorManager.darkYellow,
+                                  heading: "Smart voice Assistant",
+                                  text:
+                                      "Get the best of both worlds with a voice assistant powered by Dall-E and ChatGPT",
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-              Visibility(
-                visible: isOptions,
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Here are a few commands",
-                            style: TextStyle(
-                                fontFamily: 'Cera Pro',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
-                          )),
-                    ),
-                    CommandBox(
-                      color: ColorManager.darkYellow,
-                      heading: "ChatGpt",
-                      text:
-                          "A smarter way to stay organised and informed with ChatGpt",
-                    ),
-                    CommandBox(
-                      color: ColorManager.mediumYellow,
-                      heading: "Dall-E",
-                      text:
-                          "Get inspired and stay creative with your personal assistant powered by Dall-E",
-                    ),
-                    CommandBox(
-                      color: ColorManager.darkYellow,
-                      heading: "Smart voice Assistant",
-                      text:
-                          "Get the best of both worlds with a voice assistant powered by Dall-E and ChatGPT",
-                    ),
-                  ],
-                ),
+                  
+                ],
               ),
             ],
           ),
@@ -160,18 +190,25 @@ class _HomeScreenState extends State<HomeScreen> {
               await stopListening();
 
               await Future.delayed(Duration(milliseconds: 500));
+              setState(() {
+                isLoading = true;
+                isOptions = false;
+              });
               final content = await geminiMethods.isImageNeeded(lastWords);
               if (content.contains('https')) {
                 generateImageUrl = content;
                 generatedContent = null;
-                isOptions=false;
+                
                 setState(() {});
               } else {
                 print("text set");
                 generateImageUrl = null;
                 generatedContent = content;
-                isOptions=false;
-                setState(() {});
+
+                setState(() {
+                  isLoading = false;
+                });
+                
               }
             } else {
               print("init");
@@ -179,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
           backgroundColor: ColorManager.lightYellow,
-          child: const Icon(Icons.mic)),
+          child:  Icon(speech.isListening?Icons.mic_off: Icons.mic)),
     );
   }
 }
